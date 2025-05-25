@@ -6,8 +6,8 @@ import { deleteUploadedFile } from "@/middlewares/file-upload";
 export const getAllBlogPosts = async (c: Context) => {
   try {
     const posts = await BlogPost.find()
-    .populate("postedBy", "full_name profile_picture")
-    .sort({ createdAt: -1 });
+      .populate("postedBy", "full_name profile_picture")
+      .sort({ createdAt: -1 });
     return c.json(
       {
         success: true,
@@ -23,8 +23,10 @@ export const getAllBlogPosts = async (c: Context) => {
 export const getBlogPostById = async (c: Context) => {
   try {
     const postId = c.req.param("id");
-    const post = await BlogPost.findById(postId)
-      .populate("postedBy", "full_name profile_picture");
+    const post = await BlogPost.findById(postId).populate(
+      "postedBy",
+      "full_name profile_picture"
+    );
     if (!post) {
       throw new NotFoundError("Blog post not found");
     }
@@ -78,13 +80,13 @@ export const updateBlogPost = async (c: Context) => {
     const postId = c.req.param("id");
     const updateData = c.get("validatedUpdateBlogData");
 
-    const existingPost = await BlogPost.findById(postId)
-      .populate("postedBy", "full_name");
+    const existingPost = await BlogPost.findById(postId).populate(
+      "postedBy",
+      "full_name"
+    );
     if (!existingPost) {
       throw new NotFoundError("Blog post not found");
-    }
-
-    // If updating thumbnail and old thumbnail exists, delete the old file
+    } // If updating thumbnail and old thumbnail exists, delete the old file
     if (
       updateData.thumbnail &&
       existingPost.thumbnail &&
@@ -92,7 +94,7 @@ export const updateBlogPost = async (c: Context) => {
     ) {
       // Only delete if it's a local file (starts with /uploads/)
       if (existingPost.thumbnail.startsWith("/uploads/")) {
-        deleteUploadedFile(existingPost.thumbnail);
+        deleteUploadedFile(existingPost.thumbnail, "thumbnails");
       }
     }
 
@@ -123,14 +125,12 @@ export const deleteBlogPost = async (c: Context) => {
 
     if (!postToDelete) {
       throw new NotFoundError("Blog post not found");
-    }
-
-    // Delete associated thumbnail file if it exists
+    } // Delete associated thumbnail file if it exists
     if (
       postToDelete.thumbnail &&
       postToDelete.thumbnail.startsWith("/uploads/")
     ) {
-      deleteUploadedFile(postToDelete.thumbnail);
+      deleteUploadedFile(postToDelete.thumbnail, "thumbnails");
     }
 
     await BlogPost.findByIdAndDelete(postId);

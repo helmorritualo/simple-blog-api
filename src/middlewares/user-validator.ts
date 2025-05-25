@@ -18,7 +18,8 @@ export const userUpdateSchema = z
       .string()
       .min(4, {
         message: "Username must be at least 4 characters long",
-      }).optional(),
+      })
+      .optional(),
 
     gender: z
       .string()
@@ -57,9 +58,32 @@ export const passwordUpdateSchema = z.object({
 
 export const validateUserUpdate = async (c: Context, next: Next) => {
   try {
-    const body = await c.req.json();
-    const validatedData = userUpdateSchema.parse(body);
+    let body: any = {};
+    const contentType = c.req.header("content-type");
 
+    if (contentType && contentType.includes("multipart/form-data")) {
+      const formData = await c.req.formData();
+
+      const fullName = formData.get("full_name")?.toString();
+      const email = formData.get("email")?.toString();
+      const username = formData.get("username")?.toString();
+      const gender = formData.get("gender")?.toString();
+      const profilePicture = c.get("uploadedProfilePicture");
+
+      if (fullName) body.full_name = fullName;
+      if (email) body.email = email;
+      if (username) body.username = username;
+      if (gender) body.gender = gender;
+      if (profilePicture) body.profile_picture = profilePicture;
+    } else {
+      body = await c.req.json();
+      // If profile picture was uploaded, use the uploaded file URL
+      if (c.get("uploadedProfilePicture")) {
+        body.profile_picture = c.get("uploadedProfilePicture");
+      }
+    }
+
+    const validatedData = userUpdateSchema.parse(body);
     c.set("validatedUserUpdateData", validatedData);
 
     await next();
