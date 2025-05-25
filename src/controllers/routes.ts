@@ -1,8 +1,7 @@
 import authRouter from "./auth/route";
 import userRouter from "./user/route";
-export const routes = [
-     authRouter,
-     userRouter,
-];
+import blogPostRouter from "./blog-post/route";
+
+export const routes = [authRouter, userRouter, blogPostRouter];
 
 export type AppRoute = (typeof routes)[number];
