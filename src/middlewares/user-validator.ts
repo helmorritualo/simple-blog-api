@@ -14,6 +14,12 @@ export const userUpdateSchema = z
       })
       .optional(),
 
+    username: z
+      .string()
+      .min(4, {
+        message: "Username must be at least 4 characters long",
+      }).optional(),
+
     gender: z
       .string()
       .refine((value) => ["male", "female"].includes(value), {
