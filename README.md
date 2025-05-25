@@ -38,7 +38,7 @@ Before running this project, make sure you have the following installed:
 1. **Clone the repository**
 
    ```bash
-   git clone [<repository-url>](https://github.com/helmorritualo/simple-blog-api.git)
+   git clone https://github.com/helmorritualo/simple-blog-api.git
    cd simple-blog-api
    ```
 
