@@ -20,6 +20,12 @@ const blogPostSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+//Delete comments when blog post is deleted
+blogPostSchema.pre(['findOneAndDelete', 'deleteOne'], async function() {
+  const blogPostId = this.getQuery()._id;
+  await mongoose.model('Comment').deleteMany({ blog_id: blogPostId });
+});
+
 const BlogPost = mongoose.model("BlogPost", blogPostSchema);
 
 export default BlogPost;
