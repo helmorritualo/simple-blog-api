@@ -28,4 +28,4 @@ lerna-debug.log*
 .DS_Store
 
 api-testing.http
-uploads/*
+uploads/
